@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор валют</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana;
+            background-color: #f4f9fd;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .container {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .item {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input, select, .output {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .output {
+            background-color: #fafafa;
+            color: #333;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .currency-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .currency-item {
+            flex: 1;
+            text-align: center;
+            margin: 0 10px;
+        }
+
+        .currency-item label {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .currency-item .output {
+            min-width: 120px;
+            font-size: 18px;
+            padding: 14px;
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Конвертация валюты</h1>
+        <div class="main">
+            <div class="input-section">
+                <div class="item">
+                    <label for="amount">Введите сумму:</label>
+                    <input type="number" id="amount" placeholder="0" step="any">
+                </div>
+                <div class="item">
+                    <label for="currency">Выберите валюту:</label>
+                    <select id="currency">
+                        <option value="KZT">KZT (Тенге)</option>
+                        <option value="USD">USD (Доллар)</option>
+                        <option value="EUR">EUR (Евро)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="currency-section">
+                <div class="currency-item">
+                    <label for="output-kzt">KZT (Тенге)</label>
+                    <div class="output" id="output-kzt">-</div>
+                </div>
+                <div class="currency-item">
+                    <label for="output-usd">USD (Доллар)</label>
+                    <div class="output" id="output-usd">-</div>
+                </div>
+                <div class="currency-item">
+                    <label for="output-eur">EUR (Евро)</label>
+                    <div class="output" id="output-eur">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const exchangeRates = {
+            USD: { buy: 429, sell: 431 },
+            EUR: { buy: 507, sell: 509 },
+            KZT: { buy: 1, sell: 1 } 
+        };
+
+        const amountInput = document.getElementById("amount");
+        const currencySelect = document.getElementById("currency");
+        const outputKZT = document.getElementById("output-kzt");
+        const outputUSD = document.getElementById("output-usd");
+        const outputEUR = document.getElementById("output-eur");
+
+        function updateConversion() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const selectedCurrency = currencySelect.value;
+
+            let kzt = "-";
+            let usd = "-";
+            let eur = "-";
+
+            if (selectedCurrency === "KZT") {
+                usd = (amount / exchangeRates.USD.sell).toFixed(2);
+                eur = (amount / exchangeRates.EUR.sell).toFixed(2);
+            } else if (selectedCurrency === "USD") {
+                kzt = (amount * exchangeRates.USD.buy).toFixed(2);
+                eur = (amount * exchangeRates.USD.buy / exchangeRates.EUR.sell).toFixed(2);
+            } else if (selectedCurrency === "EUR") {
+                kzt = (amount * exchangeRates.EUR.buy).toFixed(2);
+                usd = (amount * exchangeRates.EUR.buy / exchangeRates.USD.sell).toFixed(2);
+            }
+
+            if (selectedCurrency === "KZT") {
+                outputKZT.textContent = "-";
+                outputUSD.textContent = usd;
+                outputEUR.textContent = eur;
+            } else if (selectedCurrency === "USD") {
+                outputKZT.textContent = kzt;
+                outputUSD.textContent = "-";
+                outputEUR.textContent = eur;
+            } else if (selectedCurrency === "EUR") {
+                outputKZT.textContent = kzt;
+                outputUSD.textContent = usd;
+                outputEUR.textContent = "-";
+            }
+        }
+
+        amountInput.addEventListener("input", updateConversion);
+        currencySelect.addEventListener("change", updateConversion);
+
+        updateConversion();
+    </script>
+</body>
+</html>
